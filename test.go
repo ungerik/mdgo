@@ -12,3 +12,5 @@ import "fmt"
 func HelloWorld() {
 	fmt.Println("Hello World!")
 }
+
+// The result is [test.go](https://github.com/ungerik/mdgo/blob/master/test.go)
