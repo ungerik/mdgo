@@ -14,6 +14,7 @@ func makeGoFile(filename string, info os.FileInfo) error {
 	if err != nil {
 		return err
 	}
+
 	lines := bytes.Split(data, []byte{'\n'})
 	for i, line := range lines {
 		if len(line) == 0 {
@@ -29,6 +30,9 @@ func makeGoFile(filename string, info os.FileInfo) error {
 
 	if strings.HasSuffix(filename, ".md") {
 		filename = filename[:len(filename)-len(".md")]
+		if !strings.HasSuffix(filename, ".go") {
+			filename += ".go"
+		}
 	}
 	fmt.Println(filename)
 	return ioutil.WriteFile(filename, data, info.Mode())

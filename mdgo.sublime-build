@@ -1,0 +1,6 @@
+{
+	"selector": "source.go.md",
+	"working_dir": "$project_path",
+	"path": "$HOME/go/bin", // change to your Go bin dir
+	"cmd": ["mdgo", "$file"]
+}

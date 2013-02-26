@@ -1,5 +1,5 @@
 Test file for mdgo
-==================
+------------------
 
 Source code is a tab indented block:
 
@@ -9,6 +9,6 @@ Source code is a tab indented block:
 
 And here comes another block:
 
-	func test() {
+	func HelloWorld() {
 		fmt.Println("Hello World!")
 	}
