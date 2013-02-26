@@ -1,3 +1,6 @@
+// main.go
+// -------
+
 package main
 
 import (
@@ -8,6 +11,8 @@ import (
 	"path/filepath"
 	"strings"
 )
+
+// makeGoFile creates a .go file from a .md file
 
 func makeGoFile(filename string, info os.FileInfo) error {
 	data, err := ioutil.ReadFile(filename)
@@ -28,12 +33,20 @@ func makeGoFile(filename string, info os.FileInfo) error {
 	}
 	data = bytes.Join(lines, []byte{'\n'})
 
+// Be robust about file names, remove .md:
+
 	if strings.HasSuffix(filename, ".md") {
 		filename = filename[:len(filename)-len(".md")]
+
+// Add .go extension if not present:
+
 		if !strings.HasSuffix(filename, ".go") {
 			filename += ".go"
 		}
 	}
+
+// Print out the name of the generated file to be able to pipe it to other programs:
+
 	fmt.Println(filename)
 	return ioutil.WriteFile(filename, data, info.Mode())
 }
