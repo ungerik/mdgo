@@ -1,6 +1,6 @@
 // main.go
 // -------
-
+// 
 package main
 
 import (
@@ -8,47 +8,60 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 )
 
 // makeGoFile creates a .go file from a .md file
-
+// 
 func makeGoFile(filename string, info os.FileInfo) error {
 	data, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return err
 	}
 
+	lastEmptyLine := -666
+	lastCommentedLine := -666
 	lines := bytes.Split(data, []byte{'\n'})
-	for i, line := range lines {
+	for i := 0; i < len(lines); i++ {
+		line := lines[i]
 		if len(line) == 0 {
+			lastEmptyLine = i
 			continue
 		}
 		if line[0] == '\t' {
 			lines[i] = line[1:]
+			if i-1 == lastEmptyLine && i-2 == lastCommentedLine {
+				lines[i-1] = []byte("// ")
+			}
 		} else {
 			lines[i] = append([]byte("// "), line...)
+			lastCommentedLine = i
 		}
 	}
 	data = bytes.Join(lines, []byte{'\n'})
 
-// Be robust about file names, remove .md:
-
+	// Be robust about file names, remove .md:
+	// 
 	if strings.HasSuffix(filename, ".md") {
 		filename = filename[:len(filename)-len(".md")]
 
-// Add .go extension if not present:
-
+		// Add .go extension if not present:
+		// 
 		if !strings.HasSuffix(filename, ".go") {
 			filename += ".go"
 		}
 	}
 
-// Print out the name of the generated file to be able to pipe it to other programs:
-
+	// Print out the name of the generated file to be able to pipe it to other programs:
+	// 
 	fmt.Println(filename)
-	return ioutil.WriteFile(filename, data, info.Mode())
+	err = ioutil.WriteFile(filename, data, info.Mode())
+	if err != nil {
+		return err
+	}
+	return exec.Command("gofmt", "-w", filename).Run()
 }
 
 func main() {
